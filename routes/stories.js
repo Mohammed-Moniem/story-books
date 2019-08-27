@@ -11,12 +11,36 @@ const User = mongoose.model("users");
 
 //Stories Index
 router.get("/", (req, res) => {
-  res.render("stories/index");
+  Story.find({ status: "public" })
+    .populate("user")
+    .then(stories => {
+      res.render("stories/index", { stories: stories });
+    });
+});
+
+//Show Single Story
+router.get("/show/:id", (req, res) => {
+  Story.findOne({
+    _id: req.params.id
+  })
+    .populate("user")
+    .then(story => {
+      res.render("stories/show", { story: story });
+    });
 });
 
 //Add Stories
 router.get("/add", ensureAuthenticated, (req, res) => {
   res.render("stories/add");
+});
+
+//Edit Stories
+router.get("/edit/:id", ensureAuthenticated, (req, res) => {
+  Story.findOne({
+    _id: req.params.id
+  }).then(story => {
+    res.render("stories/edit", { story: story });
+  });
 });
 
 //Process add stories

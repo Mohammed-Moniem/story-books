@@ -14,8 +14,8 @@ module.exports = function(passport) {
         proxy: true
       },
       (accessToken, refreshToken, profile, done) => {
-        console.log(accessToken);
-        console.log(profile);
+        // console.log(accessToken);
+        // console.log(profile);
 
         const image = profile.photos[0].value.substring(
           0,
