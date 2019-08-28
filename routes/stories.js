@@ -67,4 +67,38 @@ router.post("/", (req, res) => {
     res.redirect(`/stories/show/${story.id}`);
   });
 });
+
+//Edit Form Process
+router.put("/:id", (req, res) => {
+  Story.findOne({
+    _id: req.params.id
+  }).then(story => {
+    let allowComments;
+
+    if (req.body.allowComments) {
+      allowComments = true;
+    } else {
+      allowComments = false;
+    }
+
+    //New values
+    story.title = req.body.title;
+    story.body = req.body.body;
+    story.status = req.body.status;
+    story.allowComments = allowComments;
+
+    story.save().then(story => {
+      res.redirect("/dashboard");
+    });
+
+    res.render("stories/edit", { story: story });
+  });
+});
+
+//Delete Story
+router.delete("/:id", (req, res) => {
+  Story.remove({ _id: req.params.id }).then(() => {
+    res.redirect("/dashboard");
+  });
+});
 module.exports = router;

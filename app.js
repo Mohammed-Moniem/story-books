@@ -1,11 +1,12 @@
 const express = require("express");
-const mongoose = require("mongoose");
+const path = require("path");
 const exphbs = require("express-handlebars");
-const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const methodOverride = requuire("method-override");
+const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const passport = require("passport");
-const path = require("path");
 
 // Load Models
 require("./models/User");
@@ -22,8 +23,8 @@ const stories = require("./routes/stories");
 // Load Keys
 const keys = require("./config/keys");
 
-//Handlebars Helpers
-const { truncate, stripTags, formatDate } = require("./helpers/hbs");
+// Handlebars Helpers
+const { truncate, stripTags, formatDate, select } = require("./helpers/hbs");
 
 // Map global promises
 mongoose.Promise = global.Promise;
@@ -37,19 +38,22 @@ mongoose
 
 const app = express();
 
-//Body Parser
+//Body parser middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-//Handlebars Middlewares
+//Methodoverride middleware
+app.use(methodOverride("_method"));
 
+// Handlebars Middleware
 app.engine(
   "handlebars",
   exphbs({
     helpers: {
       truncate: truncate,
       stripTags: stripTags,
-      formatDate: formatDate
+      formatDate: formatDate,
+      select: select
     },
     defaultLayout: "main"
   })
@@ -75,7 +79,7 @@ app.use((req, res, next) => {
   next();
 });
 
-//Set static folder
+// Set static folder
 app.use(express.static(path.join(__dirname, "public")));
 
 // Use Routes
